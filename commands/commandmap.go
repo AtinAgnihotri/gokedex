@@ -15,7 +15,7 @@ func getCommandMap() map[string]types.CliCommand {
 		},
 		"exit": {
 			Name:        "exit",
-			Description: "Exit the Pokedex",
+			Description: "Bye!",
 			Callback: func() error {
 				return nil
 			},
