@@ -5,5 +5,7 @@ import (
 )
 
 func main() {
-	utils.Repl()
+	signal := make(chan int)
+	go utils.Repl(signal)
+	<-signal
 }

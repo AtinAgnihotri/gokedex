@@ -9,7 +9,7 @@ import (
 	"github.com/AtinAgnihotri/gokedex/commands"
 )
 
-func Repl() {
+func Repl(signal chan int) {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -24,4 +24,5 @@ func Repl() {
 			break
 		}
 	}
+	signal <- 0
 }
