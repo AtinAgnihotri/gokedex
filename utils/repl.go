@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-
-	"github.com/AtinAgnihotri/gokedex/commands"
 )
 
 func Repl(signal chan int) {
@@ -16,10 +14,16 @@ func Repl(signal chan int) {
 		fmt.Printf("gokedex > ")
 		cmdStr, err := cleanInput(reader)
 		if err != nil {
-			log.Fatal("Gokedead:", err)
+			log.Fatal("Gokeded:", err)
 		}
-		cmd := commands.GetCommand(cmdStr)
-		fmt.Println(cmd.Description)
+		cmd, err := GetCommand(cmdStr)
+		if err != nil {
+			continue
+		}
+		cmdErr := cmd.Callback()
+		if cmdErr != nil {
+			log.Fatal("Gokeded", cmdErr)
+		}
 		if cmdStr == "exit" {
 			break
 		}

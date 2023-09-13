@@ -1,4 +1,4 @@
-package commands
+package utils
 
 import (
 	"fmt"
@@ -13,10 +13,12 @@ func getCommandMap() map[string]types.CliCommand {
 			Description: "Displays a help message",
 			Callback: func() error {
 				fmt.Println(`Welcome to the Pokedex!
-				Usage:
-				
-				help: Displays a help message
-				exit: Exit the Pokedex`)
+Usage:
+
+help: Displays a help message
+exit: Exit the Pokedex
+map: Display map locations (In Pages)
+mapb: Go back a page in map locations`)
 				return nil
 			},
 		},
@@ -25,6 +27,22 @@ func getCommandMap() map[string]types.CliCommand {
 			Description: "Bye!",
 			Callback: func() error {
 				fmt.Println(``)
+				return nil
+			},
+		},
+		"map": {
+			Name:        "map",
+			Description: "Calls func",
+			Callback: func() error {
+				GetPokeApiLocations(true)
+				return nil
+			},
+		},
+		"mapb": {
+			Name:        "mapb",
+			Description: "Calls func b",
+			Callback: func() error {
+				GetPokeApiLocations(false)
 				return nil
 			},
 		},
