@@ -23,7 +23,8 @@ exit: Exit the Pokedex
 map: Display map locations (In Pages)
 mapb: Go back a page in map locations
 explore: See all pokemons encountered in an area. Usage: explore <location>
-catch: Try to catch a pokemon. Usage: catch <pokemon>`)
+catch: Try to catch a pokemon. Usage: catch <pokemon>
+inspect: Inspect a pokemon in your pokedex. Usage: inspect <pokemon>`)
 					return nil
 				}
 				cmd, err := GetCommand(cmdStr)
@@ -78,7 +79,15 @@ catch: Try to catch a pokemon. Usage: catch <pokemon>`)
 				fmt.Println()
 				defer fmt.Println()
 				if len(pokemonName) == 0 {
-					fmt.Printf("\nPlease give a location name as Argument\nUsage: explore <location>\n")
+					fmt.Printf("\nPlease give a pokemon name as Argument\nUsage: catch <pokemon>\n")
+					return nil
+				}
+				if Pokedex == nil {
+					Pokedex = make(map[string]types.Pokemon)
+				}
+				_, ok := Pokedex[pokemonName]
+				if ok {
+					fmt.Println(fmt.Sprintf("You've already caught %v!", pokemonName))
 					return nil
 				}
 				pokemon, err := GetPokemon(pokemonName)
@@ -97,6 +106,49 @@ catch: Try to catch a pokemon. Usage: catch <pokemon>`)
 				} else {
 					fmt.Println(fmt.Sprintf("%v escaped!", pokemonName))
 				}
+				return nil
+			},
+		},
+		"inspect": {
+			Name:        "inspect",
+			Description: "Inspect a pokemon in your pokedex\nUsage: inspect <pokemon>",
+			Callback: func(pokemonName string) error {
+				fmt.Println()
+				defer fmt.Println()
+				if len(pokemonName) == 0 {
+					fmt.Printf("\nPlease give a pokemon name as Argument\nUsage: inspect <pokemon>\n")
+					return nil
+				}
+				if Pokedex == nil {
+					fmt.Println("No pokemon in your pokedex")
+					return nil
+				}
+				pokemon, ok := Pokedex[pokemonName]
+				if !ok {
+					fmt.Println(fmt.Sprintf("%v not in your pokedex", pokemonName))
+					return nil
+				}
+				statsStr, typesStr := "", ""
+				for idx, pokeType := range pokemon.Types {
+					typesStr += "  - " + pokeType.Type.Name
+					if idx < len(pokemon.Types)-1 {
+						typesStr += "\n"
+					}
+				}
+				for idx, stat := range pokemon.Stats {
+					statsStr += fmt.Sprintf("  -%v: %v", stat.Stat.Name, stat.BaseStat)
+					if idx < len(pokemon.Stats)-1 {
+						statsStr += "\n"
+					}
+				}
+
+				fmt.Println(fmt.Sprintf(`Name: %v
+Height: %v
+Weight: %v
+Stats:
+%v
+Types:
+%v`, pokemon.Name, pokemon.Height, pokemon.Weight, statsStr, typesStr))
 				return nil
 			},
 		},
