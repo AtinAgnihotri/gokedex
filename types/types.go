@@ -3,7 +3,7 @@ package types
 type CliCommand struct {
 	Name        string
 	Description string
-	Callback    func() error
+	Callback    func(arg string) error
 }
 
 type PokeResponse struct {

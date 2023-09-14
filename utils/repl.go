@@ -12,7 +12,7 @@ func Repl(signal chan int) {
 
 	for {
 		fmt.Printf("gokedex > ")
-		cmdStr, err := cleanInput(reader)
+		cmdStr, arg, err := cleanInput(reader)
 		if err != nil {
 			log.Fatal("Gokeded:", err)
 		}
@@ -20,7 +20,7 @@ func Repl(signal chan int) {
 		if err != nil {
 			continue
 		}
-		cmdErr := cmd.Callback()
+		cmdErr := cmd.Callback(arg)
 		if cmdErr != nil {
 			log.Fatal("Gokeded", cmdErr)
 		}
