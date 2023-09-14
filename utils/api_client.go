@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-var apiCache = NewCache(time.Duration(300))
+var apiCache = NewCache(time.Duration(300) * time.Second)
 
 func Request(url string) (responseBody []byte, err error) {
 	cachedResp, err := apiCache.Get(url)
