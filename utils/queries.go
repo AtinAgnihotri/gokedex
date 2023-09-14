@@ -8,29 +8,30 @@ import (
 	"github.com/AtinAgnihotri/gokedex/types"
 )
 
-var PokeMap types.PokeLocationsListResponse
+var PokeLocation types.PokeLocationsListResponse
+var Pokedex map[string]types.Pokemon
 
 func GetPokeApiLocations(next bool) {
-	if len(PokeMap.Next) == 0 {
-		PokeMap.Next = "https://pokeapi.co/api/v2/location"
+	if len(PokeLocation.Next) == 0 {
+		PokeLocation.Next = "https://pokeapi.co/api/v2/location"
 	}
-	if len(PokeMap.Previous) == 0 {
-		PokeMap.Previous = "https://pokeapi.co/api/v2/location"
+	if len(PokeLocation.Previous) == 0 {
+		PokeLocation.Previous = "https://pokeapi.co/api/v2/location"
 	}
-	var url string = PokeMap.Previous
+	var url string = PokeLocation.Previous
 	if next {
-		url = PokeMap.Next
+		url = PokeLocation.Next
 	}
 	resp, err := Request(url)
 	if err != nil {
 		log.Fatal("Gokeded", err)
 	}
-	unmarshalErr := json.Unmarshal(resp, &PokeMap)
+	unmarshalErr := json.Unmarshal(resp, &PokeLocation)
 	if unmarshalErr != nil {
 		log.Fatal("Gokeded", unmarshalErr)
 	}
 	fmt.Println("\n+==== Map ====+")
-	for _, result := range PokeMap.Results {
+	for _, result := range PokeLocation.Results {
 		fmt.Println(result.Name)
 	}
 	fmt.Println()
@@ -64,16 +65,6 @@ func getPokemonsInArea(url string) (types.PokeLocationAreaResponse, error) {
 	return PokemonInAreas, nil
 }
 
-func checkIfExists[T comparable](arr []T, val T) bool {
-	exists := false
-	for _, item := range arr {
-		if item == val {
-			exists = true
-		}
-	}
-	return exists
-}
-
 func GetPokemonsInLocation(location string) {
 	defer fmt.Println()
 	var pokemons []string
@@ -88,7 +79,7 @@ func GetPokemonsInLocation(location string) {
 		}
 		for _, pokemonDatum := range locationEncounters.PokemonEncounters {
 			pokemon := pokemonDatum.Pokemon.Name
-			if !checkIfExists[string](pokemons, pokemon) {
+			if !CheckIfExists[string](pokemons, pokemon) {
 				pokemons = append(pokemons, pokemon)
 			}
 		}
@@ -101,5 +92,17 @@ func GetPokemonsInLocation(location string) {
 	for _, pokemon := range pokemons {
 		fmt.Println(fmt.Sprintf(" - %v", pokemon))
 	}
+}
 
+func GetPokemon(pokemonName string) (types.Pokemon, error) {
+	var pokemon types.Pokemon
+	resp, err := Request(fmt.Sprintf("https://pokeapi.co/api/v2/pokemon/%v", pokemonName))
+	if err != nil {
+		return pokemon, err
+	}
+	unmarshallError := json.Unmarshal(resp, &pokemon)
+	if unmarshallError != nil {
+		return pokemon, unmarshallError
+	}
+	return pokemon, nil
 }

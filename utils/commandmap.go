@@ -22,7 +22,8 @@ help: Displays a help message
 exit: Exit the Pokedex
 map: Display map locations (In Pages)
 mapb: Go back a page in map locations
-explore: See all pokemons encountered in an area. Usage: explore <location>`)
+explore: See all pokemons encountered in an area. Usage: explore <location>
+catch: Try to catch a pokemon. Usage: catch <pokemon>`)
 					return nil
 				}
 				cmd, err := GetCommand(cmdStr)
@@ -61,8 +62,41 @@ explore: See all pokemons encountered in an area. Usage: explore <location>`)
 		"explore": {
 			Name:        "explore",
 			Description: "See all pokemons encountered in an area\nUsage: explore <location>",
-			Callback: func(arg string) error {
-				GetPokemonsInLocation(arg)
+			Callback: func(location string) error {
+				if len(location) == 0 {
+					fmt.Printf("\nPlease give a location name as Argument\nUsage: explore <location>\n")
+					return nil
+				}
+				GetPokemonsInLocation(location)
+				return nil
+			},
+		},
+		"catch": {
+			Name:        "catch",
+			Description: "Try to catch a pokemon\nUsage: catch <pokemon>",
+			Callback: func(pokemonName string) error {
+				fmt.Println()
+				defer fmt.Println()
+				if len(pokemonName) == 0 {
+					fmt.Printf("\nPlease give a location name as Argument\nUsage: explore <location>\n")
+					return nil
+				}
+				pokemon, err := GetPokemon(pokemonName)
+				if err != nil {
+					fmt.Println(fmt.Sprintf("Couldn't find %v pokemon", pokemonName))
+					return nil
+				}
+				fmt.Println(fmt.Sprintf("Throwing a pokeball at %v ... ", pokemonName))
+				chance := GetRandom(pokemon.BaseExperience)
+				if chance >= (pokemon.BaseExperience / 2) {
+					fmt.Println(fmt.Sprintf("Caught %v!", pokemonName))
+					if Pokedex == nil {
+						Pokedex = make(map[string]types.Pokemon)
+					}
+					Pokedex[pokemonName] = pokemon
+				} else {
+					fmt.Println(fmt.Sprintf("%v escaped!", pokemonName))
+				}
 				return nil
 			},
 		},
