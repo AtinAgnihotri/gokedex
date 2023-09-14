@@ -45,12 +45,10 @@ func (c *Cache) Add(key string, val []byte) {
 func (c *Cache) reapLoop(interval time.Duration) {
 	ticker := time.NewTicker(interval)
 	for range ticker.C {
-		fmt.Println("Running REAP LOOP")
 		for key, value := range c.entries {
 			diff := time.Now().Sub(value.createdAt)
 
 			if diff > interval {
-				fmt.Println("Removing", key)
 				c.mu.Lock()
 				delete(c.entries, key)
 				c.mu.Unlock()
