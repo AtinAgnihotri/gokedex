@@ -1,11 +1,9 @@
 package main
 
-import (
-	"github.com/AtinAgnihotri/gokedex/utils"
-)
+import "github.com/AtinAgnihotri/gokedex/repl"
 
 func main() {
 	signal := make(chan int)
-	go utils.Repl(signal)
+	go repl.Repl(signal)
 	<-signal
 }
