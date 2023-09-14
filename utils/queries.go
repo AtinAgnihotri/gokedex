@@ -8,7 +8,7 @@ import (
 	"github.com/AtinAgnihotri/gokedex/types"
 )
 
-var PokeMap types.PokeResponse
+var PokeMap types.PokeLocationsResponse
 
 func GetPokeApiLocations(next bool) {
 	if len(PokeMap.Next) == 0 {
@@ -32,5 +32,9 @@ func GetPokeApiLocations(next bool) {
 	for _, result := range PokeMap.Results {
 		fmt.Println(result.Name)
 	}
+
+}
+
+func GetPokemonsInLocation(arg string) {
 
 }
