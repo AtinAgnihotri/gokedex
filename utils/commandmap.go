@@ -152,5 +152,28 @@ Types:
 				return nil
 			},
 		},
+		"pokedex": {
+			Name:        "pokedex",
+			Description: "Shows all pokemon in your pokedex",
+			Callback: func(_ string) error {
+				fmt.Println()
+				defer fmt.Println()
+				emptyPokedex := "Your pokedex is empty"
+
+				if Pokedex == nil {
+					fmt.Println(emptyPokedex)
+					return nil
+				}
+				if len(Pokedex) == 0 {
+					fmt.Println(emptyPokedex)
+					return nil
+				}
+				fmt.Println("Your Pokedex:")
+				for pokemonName := range Pokedex {
+					fmt.Println(" - ", pokemonName)
+				}
+				return nil
+			},
+		},
 	}
 }
