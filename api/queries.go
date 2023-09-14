@@ -1,37 +1,36 @@
-package utils
+package api
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 
+	"github.com/AtinAgnihotri/gokedex/helpers"
+	"github.com/AtinAgnihotri/gokedex/stores"
 	"github.com/AtinAgnihotri/gokedex/types"
 )
 
-var PokeLocation types.PokeLocationsListResponse
-var Pokedex map[string]types.Pokemon
-
 func GetPokeApiLocations(next bool) {
-	if len(PokeLocation.Next) == 0 {
-		PokeLocation.Next = "https://pokeapi.co/api/v2/location"
+	if len(stores.PokeLocation.Next) == 0 {
+		stores.PokeLocation.Next = "https://pokeapi.co/api/v2/location"
 	}
-	if len(PokeLocation.Previous) == 0 {
-		PokeLocation.Previous = "https://pokeapi.co/api/v2/location"
+	if len(stores.PokeLocation.Previous) == 0 {
+		stores.PokeLocation.Previous = "https://pokeapi.co/api/v2/location"
 	}
-	var url string = PokeLocation.Previous
+	var url string = stores.PokeLocation.Previous
 	if next {
-		url = PokeLocation.Next
+		url = stores.PokeLocation.Next
 	}
 	resp, err := Request(url)
 	if err != nil {
 		log.Fatal("Gokeded", err)
 	}
-	unmarshalErr := json.Unmarshal(resp, &PokeLocation)
+	unmarshalErr := json.Unmarshal(resp, &stores.PokeLocation)
 	if unmarshalErr != nil {
 		log.Fatal("Gokeded", unmarshalErr)
 	}
 	fmt.Println("\n+==== Map ====+")
-	for _, result := range PokeLocation.Results {
+	for _, result := range stores.PokeLocation.Results {
 		fmt.Println(result.Name)
 	}
 	fmt.Println()
@@ -79,7 +78,7 @@ func GetPokemonsInLocation(location string) {
 		}
 		for _, pokemonDatum := range locationEncounters.PokemonEncounters {
 			pokemon := pokemonDatum.Pokemon.Name
-			if !CheckIfExists[string](pokemons, pokemon) {
+			if !helpers.CheckIfExists[string](pokemons, pokemon) {
 				pokemons = append(pokemons, pokemon)
 			}
 		}

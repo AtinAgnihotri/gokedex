@@ -1,4 +1,4 @@
-package utils
+package api
 
 import (
 	"errors"
@@ -6,9 +6,11 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/AtinAgnihotri/gokedex/cache"
 )
 
-var apiCache = NewCache(time.Duration(300) * time.Second)
+var apiCache = cache.NewCache(time.Duration(300) * time.Second)
 
 func Request(url string) (responseBody []byte, err error) {
 	cachedResp, err := apiCache.Get(url)

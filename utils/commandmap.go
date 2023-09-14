@@ -3,6 +3,9 @@ package utils
 import (
 	"fmt"
 
+	"github.com/AtinAgnihotri/gokedex/api"
+	"github.com/AtinAgnihotri/gokedex/helpers"
+	"github.com/AtinAgnihotri/gokedex/stores"
 	types "github.com/AtinAgnihotri/gokedex/types"
 )
 
@@ -48,7 +51,7 @@ inspect: Inspect a pokemon in your pokedex. Usage: inspect <pokemon>`)
 			Name:        "map",
 			Description: "Show a page of map locations (20 at a time)",
 			Callback: func(_ string) error {
-				GetPokeApiLocations(true)
+				api.GetPokeApiLocations(true)
 				return nil
 			},
 		},
@@ -56,7 +59,7 @@ inspect: Inspect a pokemon in your pokedex. Usage: inspect <pokemon>`)
 			Name:        "mapb",
 			Description: "Go back a list of map locations",
 			Callback: func(_ string) error {
-				GetPokeApiLocations(false)
+				api.GetPokeApiLocations(false)
 				return nil
 			},
 		},
@@ -68,7 +71,7 @@ inspect: Inspect a pokemon in your pokedex. Usage: inspect <pokemon>`)
 					fmt.Printf("\nPlease give a location name as Argument\nUsage: explore <location>\n")
 					return nil
 				}
-				GetPokemonsInLocation(location)
+				api.GetPokemonsInLocation(location)
 				return nil
 			},
 		},
@@ -82,27 +85,27 @@ inspect: Inspect a pokemon in your pokedex. Usage: inspect <pokemon>`)
 					fmt.Printf("\nPlease give a pokemon name as Argument\nUsage: catch <pokemon>\n")
 					return nil
 				}
-				if Pokedex == nil {
-					Pokedex = make(map[string]types.Pokemon)
+				if stores.Pokedex == nil {
+					stores.Pokedex = make(map[string]types.Pokemon)
 				}
-				_, ok := Pokedex[pokemonName]
+				_, ok := stores.Pokedex[pokemonName]
 				if ok {
 					fmt.Println(fmt.Sprintf("You've already caught %v!", pokemonName))
 					return nil
 				}
-				pokemon, err := GetPokemon(pokemonName)
+				pokemon, err := api.GetPokemon(pokemonName)
 				if err != nil {
 					fmt.Println(fmt.Sprintf("Couldn't find %v pokemon", pokemonName))
 					return nil
 				}
 				fmt.Println(fmt.Sprintf("Throwing a pokeball at %v ... ", pokemonName))
-				chance := GetRandom(pokemon.BaseExperience)
+				chance := helpers.GetRandom(pokemon.BaseExperience)
 				if chance >= (pokemon.BaseExperience / 2) {
 					fmt.Println(fmt.Sprintf("Caught %v!", pokemonName))
-					if Pokedex == nil {
-						Pokedex = make(map[string]types.Pokemon)
+					if stores.Pokedex == nil {
+						stores.Pokedex = make(map[string]types.Pokemon)
 					}
-					Pokedex[pokemonName] = pokemon
+					stores.Pokedex[pokemonName] = pokemon
 				} else {
 					fmt.Println(fmt.Sprintf("%v escaped!", pokemonName))
 				}
@@ -119,11 +122,11 @@ inspect: Inspect a pokemon in your pokedex. Usage: inspect <pokemon>`)
 					fmt.Printf("\nPlease give a pokemon name as Argument\nUsage: inspect <pokemon>\n")
 					return nil
 				}
-				if Pokedex == nil {
+				if stores.Pokedex == nil {
 					fmt.Println("No pokemon in your pokedex")
 					return nil
 				}
-				pokemon, ok := Pokedex[pokemonName]
+				pokemon, ok := stores.Pokedex[pokemonName]
 				if !ok {
 					fmt.Println(fmt.Sprintf("%v not in your pokedex", pokemonName))
 					return nil
@@ -160,16 +163,16 @@ Types:
 				defer fmt.Println()
 				emptyPokedex := "Your pokedex is empty"
 
-				if Pokedex == nil {
+				if stores.Pokedex == nil {
 					fmt.Println(emptyPokedex)
 					return nil
 				}
-				if len(Pokedex) == 0 {
+				if len(stores.Pokedex) == 0 {
 					fmt.Println(emptyPokedex)
 					return nil
 				}
 				fmt.Println("Your Pokedex:")
-				for pokemonName := range Pokedex {
+				for pokemonName := range stores.Pokedex {
 					fmt.Println(" - ", pokemonName)
 				}
 				return nil
